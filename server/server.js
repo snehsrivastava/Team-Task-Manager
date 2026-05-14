@@ -22,13 +22,19 @@ const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173,http://
 app.use(cors({
   origin: (origin, cb) => {
     // allow server-to-server / curl (no origin) and listed origins
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    // in development allow all, in production check whitelist
+    if (!origin) return cb(null, true);
+    if (process.env.NODE_ENV !== 'production') return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
     cb(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+// Handle preflight for all routes
+app.options('*', cors());
 
 app.use(express.json({ limit: '10mb' }));
 if (process.env.NODE_ENV !== 'production') app.use(morgan('dev'));
