@@ -16,8 +16,12 @@ const app = express();
 connectDB();
 
 // CORS — supports multiple comma-separated origins in CLIENT_URL
-const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173,http://localhost:5174')
-  .split(',').map(o => o.trim());
+const allowedOrigins = (
+  process.env.CLIENT_URL ||
+  'http://localhost:5173,http://localhost:5174,https://team-task-manager-production-545f.up.railway.app'
+)
+  .split(',')
+  .map(o => o.trim());
 
 app.use(cors({
   origin: (origin, cb) => {
