@@ -83,10 +83,10 @@ Managing tasks across a team is chaotic without the right tools. Most teams face
 | Service | URL |
 |---|---|
 | 🖥️ Frontend (Vercel) | https://team-task-manager-one-rho.vercel.app |
-| ⚙️ Backend API (Render) | https://team-task-manager-nnlo.onrender.com |
-| 🏥 Health Check | https://team-task-manager-nnlo.onrender.com/api/health |
+| ⚙️ Backend API (Railway) | https://team-task-manager-production.up.railway.app |
+| 🏥 Health Check | https://team-task-manager-production.up.railway.app/api/health |
 
-> ⚠️ Backend is hosted on Render free tier — first request may take ~30 seconds to wake up.
+> ⚠️ Update the Railway URL above after deployment is complete.
 
 **Test Credentials:**
 ```
@@ -185,7 +185,7 @@ Member →  email: member@test.com  password: 123456
 | Tool | Purpose |
 |---|---|
 | Vercel | Frontend hosting with SPA routing |
-| Render | Backend API hosting |
+| Railway | Backend API hosting |
 | MongoDB Atlas | Cloud database (M0 free tier) |
 | GitHub | Version control & CI/CD trigger |
 
@@ -214,7 +214,7 @@ Member →  email: member@test.com  password: 123456
                             │ HTTPS REST API
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                      SERVER (Render)                            │
+│                      SERVER (Railway)                           │
 │                                                                 │
 │   ┌─────────────────────────────────────────────────────────┐   │
 │   │                    Express.js App                       │   │
@@ -444,7 +444,7 @@ Team Task Manager/
 
 ## 📡 API Reference
 
-**Base URL:** `https://team-task-manager-nnlo.onrender.com/api`
+**Base URL:** `https://team-task-manager-production.up.railway.app/api`
 
 All protected routes require header:
 ```
@@ -518,7 +518,7 @@ VITE_API_BASE_URL=http://localhost:5000/api
 
 ### Frontend Production — `client/.env.production`
 ```env
-VITE_API_BASE_URL=https://team-task-manager-nnlo.onrender.com/api
+VITE_API_BASE_URL=https://your-railway-url.up.railway.app/api
 ```
 
 ---
@@ -586,14 +586,12 @@ Frontend runs at → `http://localhost:5173`
 3. Network Access → Allow `0.0.0.0/0`
 4. Get connection string → `mongodb+srv://...`
 
-### Step 2 — Deploy Backend on Render
-1. Go to [render.com](https://render.com) → New Web Service
-2. Connect `snehsrivastava/Team-Task-Manager`
-3. Configure:
-   - Root Directory: `server`
-   - Build Command: `npm install`
-   - Start Command: `npm start`
-4. Add environment variables:
+### Step 2 — Deploy Backend on Railway
+1. Go to [railway.app](https://railway.app) → Login with GitHub
+2. Click **New Project** → **Deploy from GitHub repo**
+3. Select `snehsrivastava/Team-Task-Manager`
+4. Click on the service → **Settings** → set **Root Directory** to `server`
+5. Go to **Variables** tab → add:
 ```
 NODE_ENV      = production
 PORT          = 5000
@@ -602,7 +600,8 @@ JWT_SECRET    = your_secret
 JWT_EXPIRES_IN= 7d
 CLIENT_URL    = https://your-app.vercel.app
 ```
-5. Deploy → copy your Render URL
+6. Go to **Settings** → **Networking** → **Generate Domain**
+7. Copy your Railway URL → `https://your-app.up.railway.app`
 
 ### Step 3 — Deploy Frontend on Vercel
 1. Go to [vercel.com](https://vercel.com) → Import Project
@@ -614,18 +613,18 @@ CLIENT_URL    = https://your-app.vercel.app
    - Output Directory: `dist`
 4. Add environment variable:
 ```
-VITE_API_BASE_URL = https://your-render-url.onrender.com/api
+VITE_API_BASE_URL = https://your-railway-url.up.railway.app/api
 ```
 5. Deploy → copy your Vercel URL
 
 ### Step 4 — Connect Both
-- Go back to Render → update `CLIENT_URL` to your Vercel URL
-- Redeploy backend
+- Go back to Railway → update `CLIENT_URL` to your Vercel URL
+- Railway auto-redeploys on variable change
 
 ### Step 5 — Verify
 ```bash
 # Test backend health
-curl https://your-render-url.onrender.com/api/health
+curl https://your-railway-url.up.railway.app/api/health
 
 # Expected response
 { "status": "ok", "env": "production" }
